@@ -63,12 +63,6 @@ class MentatHooks implements
 	RenameUserCompleteHook,
 	PageUndeleteCompleteHook
 {
-	private MentatMessageSender $messageSender;
-
-	public function __construct( MentatMessageSender $messageSender ) {
-		$this->messageSender = $messageSender;
-	}
-
 	/**
 	 * @param WikiPage $wikiPage
 	 * @param UserIdentity $userIdentity
@@ -78,7 +72,7 @@ class MentatHooks implements
 	 * @param EditResult $editResult
 	 * @return bool
 	 */
-	public function onPageSaveComplete(
+	public static function onPageSaveComplete(
 		$wikiPage,
 		$userIdentity,
 		$summary,
@@ -102,11 +96,11 @@ class MentatHooks implements
             'revision' => MentatUtils::createRevisionInfo( $revisionRecord )
         ];
 
-		$this->messageSender->sendToMentat( $hookName, $userInfo, $pageInfo );
+		MentatMessageSender::sendToMentat( $hookName, $userInfo, $pageInfo );
 		return true;
 	}
 
-	public function onPageDeleteComplete(
+	public static function onPageDeleteComplete(
 		ProperPageIdentity $page,
 		Authority $deleter,
 		string $reason,
@@ -127,11 +121,11 @@ class MentatHooks implements
             'archived_revisions' => $archivedRevisionCount
         ];
 
-        $this->messageSender->sendToMentat( $hookName, $userInfo, $pageInfo );
+        MentatMessageSender::sendToMentat( $hookName, $userInfo, $pageInfo );
         return true;
 	}
 
-	public function onPageUndeleteComplete(
+	public static function onPageUndeleteComplete(
 		ProperPageIdentity $page,
 		Authority $restorer,
 		string $reason,
@@ -154,7 +148,7 @@ class MentatHooks implements
             'revision' => MentatUtils::createRevisionInfo( $revisionRecord )
         ];
 
-        $this->messageSender->sendToMentat( $hookName, $userInfo, $pageInfo );
+        MentatMessageSender::sendToMentat( $hookName, $userInfo, $pageInfo );
 	}
 
 	/**
@@ -163,7 +157,7 @@ class MentatHooks implements
 	 * @param array $visibilityChangeMap
 	 * @return bool
 	 */
-	public function onArticleRevisionVisibilitySet( $title, $ids, $visibilityChangeMap ): bool {
+	public static function onArticleRevisionVisibilitySet( $title, $ids, $visibilityChangeMap ): bool {
 		$hookName = 'ArticleRevisionVisibilitySet';
 		$user = RequestContext::getMain()->getUser();
         $userInfo = MentatUtils::createUserInfo( $user );
@@ -174,7 +168,7 @@ class MentatHooks implements
             'visibility_changes' => count( $visibilityChangeMap )
         ];
 
-        $this->messageSender->sendToMentat( $hookName, $userInfo, $pageInfo );
+        MentatMessageSender::sendToMentat( $hookName, $userInfo, $pageInfo );
 		return true;
 	}
 
@@ -185,7 +179,7 @@ class MentatHooks implements
 	 * @param string $reason
 	 * @return bool
 	 */
-	public function onArticleProtectComplete( $wikiPage, $user, $protect, $reason ): bool {
+	public static function onArticleProtectComplete( $wikiPage, $user, $protect, $reason ): bool {
 		$hookName = 'ArticleProtectComplete';
         $user = RequestContext::getMain()->getUser();
         $userInfo = MentatUtils::createUserInfo( $user );
@@ -197,7 +191,7 @@ class MentatHooks implements
             'protect' => $protect
         ];
 
-        $this->messageSender->sendToMentat( $hookName, $userInfo, $pageInfo );
+        MentatMessageSender::sendToMentat( $hookName, $userInfo, $pageInfo );
 		return true;
 	}
 
@@ -211,7 +205,7 @@ class MentatHooks implements
 	 * @param RevisionRecord $revision
 	 * @return bool
 	 */
-	public function onPageMoveComplete(
+	public static function onPageMoveComplete(
 		$old,
 		$new,
 		$userIdentity,
@@ -233,7 +227,7 @@ class MentatHooks implements
             'reason' => $reason
         ];
 
-        $this->messageSender->sendToMentat( $hookName, $userInfo, $pageInfo );
+        MentatMessageSender::sendToMentat( $hookName, $userInfo, $pageInfo );
 		return true;
 	}
 
@@ -242,14 +236,14 @@ class MentatHooks implements
 	 * @param bool $autocreated
 	 * @return bool
 	 */
-	public function onLocalUserCreated( $user, $autocreated ): bool {
+	public static function onLocalUserCreated( $user, $autocreated ): bool {
 		$hookName = 'LocalUserCreated';
         $userInfo = MentatUtils::createUserInfo( $user );
         $pageInfo = [
             'message_key' => 'mentat-msg-user-registered'
         ];
 
-        $this->messageSender->sendToMentat( $hookName, $userInfo, $pageInfo );
+        MentatMessageSender::sendToMentat( $hookName, $userInfo, $pageInfo );
 		return true;
 	}
 
@@ -259,7 +253,7 @@ class MentatHooks implements
 	 * @param ?DatabaseBlock $priorBlock
 	 * @return bool
 	 */
-	public function onBlockIpComplete( $block, $user, $priorBlock ): bool {
+	public static function onBlockIpComplete( $block, $user, $priorBlock ): bool {
 		$hookName = 'BlockIpComplete';
 		$expiry = $block->getExpiry();
 		$expiryAsUnix = strtotime( $expiry );
@@ -278,7 +272,7 @@ class MentatHooks implements
             'taget' => $targetInfo
         ];
 
-        $this->messageSender->sendToMentat( $hookName, $userInfo, $pageInfo );
+        MentatMessageSender::sendToMentat( $hookName, $userInfo, $pageInfo );
 		return true;
 	}
 
@@ -287,7 +281,7 @@ class MentatHooks implements
 	 * @param User $user
 	 * @return bool
 	 */
-	public function onUnblockUserComplete( $block, $user ): bool {
+	public static function onUnblockUserComplete( $block, $user ): bool {
 		$hookName = 'UnblockUserComplete';
 		$target = $block->getTargetUserIdentity();
 		if ( $target === null ) {
@@ -300,7 +294,7 @@ class MentatHooks implements
             'taget' => $targetInfo
         ];
 
-        $this->messageSender->sendToMentat( $hookName, $userInfo, $pageInfo );
+        MentatMessageSender::sendToMentat( $hookName, $userInfo, $pageInfo );
 		return true;
 	}
 
@@ -314,7 +308,7 @@ class MentatHooks implements
 	 * @param UserGroupMembership[] $newUGMs
 	 * @return bool
 	 */
-	public function onUserGroupsChanged( $user, $added, $removed, $performer, $reason, $oldUGMs, $newUGMs ): bool {
+	public static function onUserGroupsChanged( $user, $added, $removed, $performer, $reason, $oldUGMs, $newUGMs ): bool {
 		$hookName = 'UserGroupsChanged';
 
 		if ( $performer === false ) {
@@ -332,7 +326,7 @@ class MentatHooks implements
             'performer' => $performerInfo
         ];
 
-        $this->messageSender->sendToMentat( $hookName, $userInfo, $pageInfo );
+        MentatMessageSender::sendToMentat( $hookName, $userInfo, $pageInfo );
 		return true;
 	}
 
@@ -340,7 +334,7 @@ class MentatHooks implements
 	 * @param UploadBase $uploadBase
 	 * @return bool
 	 */
-	public function onUploadComplete( $uploadBase ): bool {
+	public static function onUploadComplete( $uploadBase ): bool {
 		$hookName = 'UploadComplete';
 		$lf = $uploadBase->getLocalFile();
 		$user = MediaWikiServices::getInstance()->getUserFactory()->newFromUserIdentity( $lf->getUploader() );
@@ -358,7 +352,7 @@ class MentatHooks implements
             'mime_type' => $lf->getMimeType()
         ];
 
-        $this->messageSender->sendToMentat( $hookName, $userInfo, $pageInfo );
+        MentatMessageSender::sendToMentat( $hookName, $userInfo, $pageInfo );
 		return true;
 	}
 
@@ -370,7 +364,7 @@ class MentatHooks implements
 	 * @param string $reason
 	 * @return bool
 	 */
-	public function onFileDeleteComplete( $file, $oldimage, $article, $user, $reason ): bool {
+	public static function onFileDeleteComplete( $file, $oldimage, $article, $user, $reason ): bool {
 		$hookName = 'FileDeleteComplete';
 		if ( $article ) {
 			// Entire page was deleted, onArticleDeleteComplete will handle this
@@ -384,7 +378,7 @@ class MentatHooks implements
             'url' => $file->getTitle()->getFullURL( '', false, PROTO_CANONICAL )
         ];
 
-        $this->messageSender->sendToMentat( $hookName, $userInfo, $pageInfo );
+        MentatMessageSender::sendToMentat( $hookName, $userInfo, $pageInfo );
 		return true;
 	}
 
@@ -395,7 +389,7 @@ class MentatHooks implements
 	 * @param string $reason
 	 * @return bool
 	 */
-	public function onFileUndeleteComplete( $title, $fileVersions, $user, $reason ): bool {
+	public static function onFileUndeleteComplete( $title, $fileVersions, $user, $reason ): bool {
 		$hookName = 'FileUndeleteComplete';
         $userInfo = MentatUtils::createUserInfo( $user );
         $pageInfo = [
@@ -405,7 +399,7 @@ class MentatHooks implements
             'url' => $title->getFullURL( '', false, PROTO_CANONICAL )
         ];
 
-        $this->messageSender->sendToMentat( $hookName, $userInfo, $pageInfo );
+        MentatMessageSender::sendToMentat( $hookName, $userInfo, $pageInfo );
 		return true;
 	}
 
@@ -417,7 +411,7 @@ class MentatHooks implements
 	 * @param array $pageInfo
 	 * @return bool
 	 */
-	public function onAfterImportPage( $title, $foreignTitle, $revCount, $sRevCount, $pageInfo ): bool {
+	public static function onAfterImportPage( $title, $foreignTitle, $revCount, $sRevCount, $pageInfo ): bool {
 		$hookName = 'AfterImportPage';
 		$user = RequestContext::getMain()->getUser();
         $userInfo = MentatUtils::createUserInfo( $user );
@@ -430,7 +424,7 @@ class MentatHooks implements
             's_rev_count' => $sRevCount
         ];
 
-        $this->messageSender->sendToMentat( $hookName, $userInfo, $pageInfo );
+        MentatMessageSender::sendToMentat( $hookName, $userInfo, $pageInfo );
 		return true;
 	}
 
@@ -439,7 +433,7 @@ class MentatHooks implements
 	 * @param Title $destTitle
 	 * @return bool
 	 */
-	public function onArticleMergeComplete( $targetTitle, $destTitle ): bool {
+	public static function onArticleMergeComplete( $targetTitle, $destTitle ): bool {
 		$hookName = 'ArticleMergeComplete';
 		$user = RequestContext::getMain()->getUser();
         $userInfo = MentatUtils::createUserInfo( $user );
@@ -452,7 +446,7 @@ class MentatHooks implements
             'url' => $destTitle->getFullURL( '', false, PROTO_CANONICAL )
         ];
 
-        $this->messageSender->sendToMentat( $hookName, $userInfo, $pageInfo );
+        MentatMessageSender::sendToMentat( $hookName, $userInfo, $pageInfo );
 		return true;
 	}
 
@@ -464,7 +458,7 @@ class MentatHooks implements
 	 * @return bool
 	 * @see https://github.com/wikimedia/mediawiki-extensions-ApprovedRevs/blob/REL1_45/includes/ApprovedRevs.php#L602
 	 */
-	public function onApprovedRevsRevisionApproved( $output, $title, $rev_id, $content ): bool {
+	public static function onApprovedRevsRevisionApproved( $output, $title, $rev_id, $content ): bool {
 		$hookName = 'ApprovedRevsRevisionApproved';
 		$user = RequestContext::getMain()->getUser();
 		// Get the revision being approved here
@@ -482,7 +476,7 @@ class MentatHooks implements
             'url' => $title->getFullURL( '', false, PROTO_CANONICAL )
         ];
 
-        $this->messageSender->sendToMentat( $hookName, $userInfo, $pageInfo );
+        MentatMessageSender::sendToMentat( $hookName, $userInfo, $pageInfo );
 		return true;
 	}
 
@@ -493,7 +487,7 @@ class MentatHooks implements
 	 * @return bool
 	 * @see https://github.com/wikimedia/mediawiki-extensions-ApprovedRevs/blob/REL1_45/includes/ApprovedRevs.php#L712
 	 */
-	public function onApprovedRevsRevisionUnapproved( $output, $title, $content ): bool {
+	public static function onApprovedRevsRevisionUnapproved( $output, $title, $content ): bool {
 		$hookName = 'ApprovedRevsRevisionUnapproved';
 		$user = RequestContext::getMain()->getUser();
 		$userInfo = MentatUtils::createUserInfo( $user );
@@ -502,7 +496,7 @@ class MentatHooks implements
             'title' => $title,
             'url' => $title->getFullURL( '', false, PROTO_CANONICAL )
         ];
-        $this->messageSender->sendToMentat( $hookName, $userInfo, $pageInfo );
+        MentatMessageSender::sendToMentat( $hookName, $userInfo, $pageInfo );
 		return true;
 	}
 
@@ -514,7 +508,7 @@ class MentatHooks implements
 	 * @return bool
 	 * @see https://github.com/wikimedia/mediawiki-extensions-ApprovedRevs/blob/REL1_45/includes/ApprovedRevs.php#L827
 	 */
-	public function onApprovedRevsFileRevisionApproved( $parser, $title, $timestamp, $sha1 ): bool {
+	public static function onApprovedRevsFileRevisionApproved( $parser, $title, $timestamp, $sha1 ): bool {
 		$hookName = 'ApprovedRevsFileRevisionApproved';
 		$user = RequestContext::getMain()->getUser();
 		$imagepage = ImagePage::newFromID( $title->getArticleID() );
@@ -532,7 +526,7 @@ class MentatHooks implements
             'image_url' => $displayedFileUrl,
             'uploader' => $uploaderInfo
         ];
-        $this->messageSender->sendToMentat( $hookName, $userInfo, $pageInfo );
+        MentatMessageSender::sendToMentat( $hookName, $userInfo, $pageInfo );
 		return true;
 	}
 
@@ -542,7 +536,7 @@ class MentatHooks implements
 	 * @return bool
 	 * @see https://github.com/wikimedia/mediawiki-extensions-ApprovedRevs/blob/REL1_45/includes/ApprovedRevs.php#L865
 	 */
-	public function onApprovedRevsFileRevisionUnapproved( $parser, $title ): bool {
+	public static function onApprovedRevsFileRevisionUnapproved( $parser, $title ): bool {
 		$hookName = 'ApprovedRevsFileRevisionUnapproved';
 		$user = RequestContext::getMain()->getUser();
         $userInfo = MentatUtils::createUserInfo( $user );
@@ -551,7 +545,7 @@ class MentatHooks implements
             'title' => $title,
             'url' => $title->getFullURL( '', false, PROTO_CANONICAL )
         ];
-        $this->messageSender->sendToMentat( $hookName, $userInfo, $pageInfo );
+        MentatMessageSender::sendToMentat( $hookName, $userInfo, $pageInfo );
 		return true;
 	}
 
@@ -561,7 +555,7 @@ class MentatHooks implements
 	 * @param string $new
 	 * @return void
 	 */
-	public function onRenameUserComplete( $uid, $old, $new ): void {
+	public static function onRenameUserComplete( $uid, $old, $new ): void {
 		$hookName = 'RenameUserComplete';
 		$user = RequestContext::getMain()->getUser();
 		$renamedUserAsTitle = MediaWikiServices::getInstance()->getUserFactory()->newFromName( $new )->getUserPage();
@@ -573,6 +567,6 @@ class MentatHooks implements
             'title' => $renamedUserAsTitle,
             'url' => $renamedUserAsTitle->getFullURL( '', false, PROTO_CANONICAL )
         ];
-        $this->messageSender->sendToMentat( $hookName, $userInfo, $pageInfo );
+        MentatMessageSender::sendToMentat( $hookName, $userInfo, $pageInfo );
 	}
 }

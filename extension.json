@@ -20,37 +20,31 @@
 	"MessagesDirs": {
 		"Mentat": "i18n"
 	},
-	"HookHandlers": {
-		"main": {
-			"class": "MediaWiki\\Extension\\Mentat\\MentatHooks",
-			"services": [
-				"Mentat.MentatMessageSender"
-			]
-		}
+	"AutoloadClasses": {
+		"MentatHooks": "src/MentatHooks.php",
+		"MentatUtils": "src/MentatUtils.php",
+		"MentatMessageSender": "src/MentatMessageSender.php"
 	},
 	"Hooks": {
-		"PageSaveComplete": "main",
-		"PageDeleteComplete": "main",
-		"PageUndeleteComplete": "main",
-		"ArticleRevisionVisibilitySet": "main",
-		"ArticleProtectComplete": "main",
-		"PageMoveComplete": "main",
-		"LocalUserCreated": "main",
-		"BlockIpComplete": "main",
-		"UnblockUserComplete": "main",
-		"UserGroupsChanged": "main",
-		"UploadComplete": "main",
-		"FileDeleteComplete": "main",
-		"FileUndeleteComplete": "main",
-		"AfterImportPage": "main",
-		"ArticleMergeComplete": "main",
-		"ApprovedRevsRevisionApproved": "main",
-		"ApprovedRevsRevisionUnapproved": "main",
-		"ApprovedRevsFileRevisionApproved": "main",
-		"ApprovedRevsFileRevisionUnapproved": "main",
-		"RenameUserComplete": "main"
-	},
-	"ServiceWiringFiles": [
-		"src/ServiceWiring.php"
-	]
+		"PageSaveComplete": "MentatHooks::onPageSaveComplete",
+		"PageDeleteComplete": "MentatHooks::onPageDeleteComplete",
+		"ArticleUndelete": "MentatHooks::onArticleUndelete",
+		"ArticleRevisionVisibilitySet": "MentatHooks::onArticleRevisionVisibilitySet",
+		"ArticleProtectComplete": "MentatHooks::onArticleProtectComplete",
+		"PageMoveComplete": "MentatHooks::onPageMoveComplete",
+		"LocalUserCreated": "MentatHooks::onLocalUserCreated",
+		"BlockIpComplete": "MentatHooks::onBlockIpComplete",
+		"UnblockUserComplete": "MentatHooks::onUnblockUserComplete",
+		"UserGroupsChanged": "MentatHooks::onUserGroupsChanged",
+		"UploadComplete": "MentatHooks::onUploadComplete",
+		"FileDeleteComplete": "MentatHooks::onFileDeleteComplete",
+		"FileUndeleteComplete": "MentatHooks::onFileUndeleteComplete",
+		"AfterImportPage": "MentatHooks::onAfterImportPage",
+		"ArticleMergeComplete": "MentatHooks::onArticleMergeComplete",
+		"ApprovedRevsRevisionApproved": "MentatHooks::onApprovedRevsRevisionApproved",
+		"ApprovedRevsRevisionUnapproved": "MentatHooks::onApprovedRevsRevisionUnapproved",
+		"ApprovedRevsFileRevisionApproved": "MentatHooks::onApprovedRevsFileRevisionApproved",
+		"ApprovedRevsFileRevisionUnapproved": "MentatHooks::onApprovedRevsFileRevisionUnapproved",
+		"RenameUserComplete": "MentatHooks::onRenameUserComplete"
+	}
 }

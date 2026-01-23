@@ -4,19 +4,8 @@ namespace MediaWiki\Extension\Mentat;
 
 use Exception;
 use MediaWiki\Deferred\DeferredUpdates;
-use MediaWiki\Http\HttpRequestFactory;
-use Wikimedia\Http\MultiHttpClient;
 
 class MentatMessageSender {
-	public MultiHttpClient $multiHttpClient;
-
-	public function __construct( HttpRequestFactory $httpRequestFactory ) {
-		$this->multiHttpClient = $httpRequestFactory->createMultiClient( [
-			'connTimeout' => 10,
-			'reqTimeout' => 10
-		] );
-	}
-
 	/**
 	 * Sends a message to Mentat, based on the extension's configuration.
 	 * @param string $hookName
@@ -24,7 +13,7 @@ class MentatMessageSender {
 	 * @param array $pageInfo
 	 * @return void
 	 */
-	public function sendToMentat( string $hookName, array $userInfo, array $pageInfo ) {
+	public static function sendToMentat( string $hookName, array $userInfo, array $pageInfo ): void {
 		global $wgMentatWebhookURL;
 
 		if ( !$wgMentatWebhookURL ) {
@@ -43,8 +32,8 @@ class MentatMessageSender {
 			return;
 		}
 
-        $body = $this->buildRequest( $url, $hookName, $userInfo, $pageInfo );
-        $this->sendWebhook($urls, $body);
+        $body = MentatMessageSender::buildRequest( $url, $hookName, $userInfo, $pageInfo );
+        MentatMessageSender::sendWebhook($urls, $body);
 	}
 
 	/**
@@ -55,7 +44,7 @@ class MentatMessageSender {
 	 * @param array $userInfo
 	 * @return array
 	 */
-	private function buildRequest( string $url, string $hook, array $userInfo, array $pageInfo ): array {
+	public static function buildRequest( string $url, string $hook, array $userInfo, array $pageInfo ): array {
 	    global $wgServer;
 
 		return [
@@ -69,7 +58,7 @@ class MentatMessageSender {
     /**
 	 * Handles sending a webhook to Discord using cURL
 	 */
-	public static function sendWebhook($urls, $body) {
+	public static function sendWebhook($urls, $body): void {
 		DeferredUpdates::addCallableUpdate( function() use ( $urls, $body ) {
 			$user_agent = 'mw-mentat/1.0 (github.com/FlamingMojo)';
 			$json = json_encode($body);
@@ -107,7 +96,5 @@ class MentatMessageSender {
 
             curl_multi_close($mh);
         });
-
-		return true;
 	}
 }
