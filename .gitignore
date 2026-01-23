@@ -1,0 +1,4 @@
+/vendor/
+.idea/
+debug.log
+.DS_Store

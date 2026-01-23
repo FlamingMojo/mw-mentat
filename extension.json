@@ -1,0 +1,56 @@
+{
+	"name": "Mentat",
+	"author": [
+		"[https://github.com/FlamingMojo FlamingMojo]"
+	],
+	"url": "https://github.com/flamingmojo/mw-mentat",
+	"version": "0.1",
+	"descriptionmsg": "mentat-desc",
+	"license-name": "MIT",
+	"requires": {
+		"MediaWiki": ">= 1.40.0"
+	},
+	"manifest_version": 1,
+	"config": {
+		"MentatWebhookURL": ["https://mentat.wiki/webhooks/"]
+	},
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\Mentat\\": "src/"
+	},
+	"MessagesDirs": {
+		"Mentat": "i18n"
+	},
+	"HookHandlers": {
+		"main": {
+			"class": "MediaWiki\\Extension\\Mentat\\MentatHooks",
+			"services": [
+				"Mentat.MentatMessageSender"
+			]
+		}
+	},
+	"Hooks": {
+		"PageSaveComplete": "main",
+		"PageDeleteComplete": "main",
+		"PageUndeleteComplete": "main",
+		"ArticleRevisionVisibilitySet": "main",
+		"ArticleProtectComplete": "main",
+		"PageMoveComplete": "main",
+		"LocalUserCreated": "main",
+		"BlockIpComplete": "main",
+		"UnblockUserComplete": "main",
+		"UserGroupsChanged": "main",
+		"UploadComplete": "main",
+		"FileDeleteComplete": "main",
+		"FileUndeleteComplete": "main",
+		"AfterImportPage": "main",
+		"ArticleMergeComplete": "main",
+		"ApprovedRevsRevisionApproved": "main",
+		"ApprovedRevsRevisionUnapproved": "main",
+		"ApprovedRevsFileRevisionApproved": "main",
+		"ApprovedRevsFileRevisionUnapproved": "main",
+		"RenameUserComplete": "main"
+	},
+	"ServiceWiringFiles": [
+		"src/ServiceWiring.php"
+	]
+}
