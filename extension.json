@@ -4,26 +4,22 @@
 		"[https://github.com/FlamingMojo FlamingMojo]"
 	],
 	"url": "https://github.com/flamingmojo/mw-mentat",
-	"version": "0.1",
+	"version": "0.1.0",
 	"descriptionmsg": "mentat-desc",
 	"license-name": "MIT",
 	"requires": {
-		"MediaWiki": ">= 1.40.0"
+		"MediaWiki": ">= 1.38.0"
 	},
 	"manifest_version": 1,
 	"config": {
-		"MentatWebhookURL": ["https://mentat.wiki/webhooks/"]
-	},
-	"AutoloadNamespaces": {
-		"MediaWiki\\Extension\\Mentat\\": "src/"
+		"MentatWebhookURL": ["https://mentat.wiki/webhook"]
 	},
 	"MessagesDirs": {
-		"Mentat": "i18n"
+		"mw-discord": "i18n"
 	},
 	"AutoloadClasses": {
 		"MentatHooks": "src/MentatHooks.php",
-		"MentatUtils": "src/MentatUtils.php",
-		"MentatMessageSender": "src/MentatMessageSender.php"
+		"MentatUtils": "src/Utils.php"
 	},
 	"Hooks": {
 		"PageSaveComplete": "MentatHooks::onPageSaveComplete",
