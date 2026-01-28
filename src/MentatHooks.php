@@ -175,7 +175,7 @@ class MentatHooks {
             'reason' => $block->getReasonComment()->text,
             'expiry' => $expiry,
             'expiry_as_unix' => $expiryAsUnix,
-            'taget' => $targetInfo
+            'target' => $targetInfo
         ];
 		$payload = MentatUtils::buildRequest($hookName, $userInfo, $pageInfo);
 		MentatUtils::handleMentat($hookName, $payload);
@@ -196,7 +196,7 @@ class MentatHooks {
         $targetInfo = MentatUtils::createUserInfo( $target );
         $pageInfo = [
             'message_key' => 'mentat-msg-user-unblock',
-            'taget' => $targetInfo
+            'target' => $targetInfo
         ];
 		$payload = MentatUtils::buildRequest($hookName, $userInfo, $pageInfo);
 		MentatUtils::handleMentat($hookName, $payload);
