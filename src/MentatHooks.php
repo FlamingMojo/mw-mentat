@@ -235,7 +235,7 @@ class MentatHooks {
 	 */
 	public static function onUploadComplete( &$image ) {
 		$hookName = 'UploadComplete';
-		$lf = $uploadBase->getLocalFile();
+		$lf = $image->getLocalFile();
 		$user = MediaWikiServices::getInstance()->getUserFactory()->newFromUserIdentity( $lf->getUploader() );
 		$comment = $lf->getDescription();
 		$isNewRevision = count( $lf->getHistory() ) > 0;
